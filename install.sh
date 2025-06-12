@@ -32,6 +32,18 @@ create_symlink "$DOTFILES/wezterm/.wezterm.lua" "$HOME/.wezterm.lua"
 
 # Tmux
 create_symlink "$DOTFILES/tmux/.tmux.conf" "$HOME/.tmux.conf"
+create_symlink "$DOTFILES/tmux/.tmux" "$HOME/.tmux"
+# Instalar TPM y plugins de tmux
+TPM_DIR="$HOME/.tmux/plugins/tpm"
+if [ ! -d "$TPM_DIR" ]; then
+  echo "📥 Clonando TPM..."
+  git clone https://github.com/tmux-plugins/tpm "$TPM_DIR"
+else
+  echo "✅ TPM ya está instalado."
+fi
+
+echo "⚙️ Instalando plugins de tmux con TPM..."
+"$TPM_DIR/bin/install_plugins"
 
 # fzf-git.sh (descarga o actualiza)
 FZF_GIT_DIR="$DOTFILES/fzf-git.sh"
