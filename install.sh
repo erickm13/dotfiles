@@ -1,63 +1,52 @@
 #!/bin/bash
 
-echo "🔗 Creando enlaces simbólicos y configuraciones..."
+DOTFILES="$HOME/dotfiles"
 
-# Detectar usuario de Windows desde cmd.exe
-WINDOWS_USER=$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r')
-WINDOWS_HOME="/mnt/c/Users/$WINDOWS_USER"
-REPO_PATH="$(pwd)"
+# Función para crear symlinks seguros con backup
+create_symlink() {
+  local target=$1
+  local link=$2
+
+  if [ -L "$link" ]; then
+    echo "🔁 Eliminando symlink anterior: $link"
+    rm "$link"
+  elif [ -e "$link" ]; then
+    echo "📦 Haciendo backup de $link → ${link}.backup"
+    mv "$link" "${link}.backup"
+  fi
+
+  echo "🔗 Creando symlink: $link → $target"
+  ln -sf "$target" "$link"
+}
+
+echo "🚀 Instalando dotfiles..."
 
 # Neovim
-mkdir -p ~/.config/nvim
-ln -sf "$REPO_PATH/nvim/init.lua" ~/.config/nvim/init.lua
-ln -sf "$REPO_PATH/nvim/lua" ~/.config/nvim/lua
+create_symlink "$DOTFILES/nvim" "$HOME/.config/nvim"
 
 # Zsh
-ln -sf "$REPO_PATH/zsh/.zshrc" ~/.zshrc
+create_symlink "$DOTFILES/zsh/.zshrc" "$HOME/.zshrc"
+
+# Wezterm
+create_symlink "$DOTFILES/wezterm/.wezterm.lua" "$HOME/.wezterm.lua"
 
 # Tmux
-ln -sf "$(pwd)/tmux/.tmux.conf" ~/.tmux.conf
-ln -sf "$(pwd)/tmux/.tmux" ~/.tmux
+create_symlink "$DOTFILES/tmux/.tmux.conf" "$HOME/.tmux.conf"
 
-# WezTerm (copiar en vez de symlink)
-cp -f "$REPO_PATH/wezterm/.wezterm.lua" "$WINDOWS_HOME/.wezterm.lua"
+# fzf-git.sh (descarga o actualiza)
+FZF_GIT_DIR="$DOTFILES/fzf-git.sh"
+if [ ! -d "$FZF_GIT_DIR" ]; then
+  echo "📦 Clonando fzf-git.sh..."
+  git clone https://github.com/junegunn/fzf-git.sh.git "$FZF_GIT_DIR"
+else
+  echo "🔄 Actualizando fzf-git.sh..."
+  git -C "$FZF_GIT_DIR" pull --quiet
+fi
 
-echo ""
-echo "✅ Instalación completa. Verificando enlaces..."
+# Ejecutar script post-check (si existe)
+if [ -f "$DOTFILES/post-check.sh" ]; then
+  echo "✅ Ejecutando verificación de enlaces..."
+  bash "$DOTFILES/post-check.sh"
+fi
 
-# Función para verificar symlinks
-check_symlink() {
-  local target=$1
-  local expected=$2
-
-  if [ -L "$target" ]; then
-    actual=$(readlink -f "$target")
-    if [ "$actual" == "$expected" ]; then
-      echo "✅ $target → OK"
-    else
-      echo "⚠️ $target → Apunta a $actual, debería ser $expected"
-    fi
-  else
-    echo "❌ $target → No es un enlace simbólico"
-  fi
-}
-
-# Función para verificar archivos copiados
-check_file_copy() {
-  local path=$1
-  if [ -f "$path" ]; then
-    echo "✅ $path → Archivo presente"
-  else
-    echo "❌ $path → No se encontró el archivo"
-  fi
-}
-
-# Ejecutar verificaciones
-check_symlink ~/.zshrc "$REPO_PATH/zsh/.zshrc"
-check_symlink ~/.config/nvim/init.lua "$REPO_PATH/nvim/init.lua"
-check_symlink ~/.tmux.conf "$REPO_PATH/tmux/.tmux.conf"
-check_symlink ~/.tmux "$REPO_PATH/tmux/.tmux"
-
-check_file_copy "$WINDOWS_HOME/.wezterm.lua"
-
-echo "🧪 Verificación finalizada."
+echo "🎉 Instalación completa."
