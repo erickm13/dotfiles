@@ -1,0 +1,30 @@
+# Ignoreo de plugins descargados por TPM
+tmux/.tmux/plugins/*
+!tmux/.tmux/plugins/.gitkeep
+
+# Caches, swap, logs
+*.swp
+*.swo
+*.bak
+*.log
+
+# Archivos de compilación o temporales
+*.pyc
+*.class
+*.tmp
+.DS_Store
+
+# LazyVim/Lazy.nvim y Neovim caché
+nvim/lazy-lock.json
+nvim/.backup/
+nvim/.undo/
+nvim/.swap/
+nvim/.session/
+
+# Configs locales que no querés subir (ej: API keys, overrides)
+.env
+*.local
+
+# Copias automáticas de WezTerm si las hiciste por fuera
+/mnt/c/Users/*/.wezterm.lua
+
