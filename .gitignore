@@ -25,6 +25,11 @@ nvim/.session/
 .env
 *.local
 
+# Scripts externos clonados por install.sh
+fzf-git.sh/
+
+
 # Copias automáticas de WezTerm si las hiciste por fuera
 /mnt/c/Users/*/.wezterm.lua
+
 
