@@ -15,6 +15,10 @@ ln -sf "$REPO_PATH/nvim/lua" ~/.config/nvim/lua
 # Zsh
 ln -sf "$REPO_PATH/zsh/.zshrc" ~/.zshrc
 
+# Tmux
+ln -sf "$(pwd)/tmux/.tmux.conf" ~/.tmux.conf
+ln -sf "$(pwd)/tmux/.tmux" ~/.tmux
+
 # WezTerm (copiar en vez de symlink)
 cp -f "$REPO_PATH/wezterm/.wezterm.lua" "$WINDOWS_HOME/.wezterm.lua"
 
@@ -51,6 +55,9 @@ check_file_copy() {
 # Ejecutar verificaciones
 check_symlink ~/.zshrc "$REPO_PATH/zsh/.zshrc"
 check_symlink ~/.config/nvim/init.lua "$REPO_PATH/nvim/init.lua"
+check_symlink ~/.tmux.conf "$REPO_PATH/tmux/.tmux.conf"
+check_symlink ~/.tmux "$REPO_PATH/tmux/.tmux"
+
 check_file_copy "$WINDOWS_HOME/.wezterm.lua"
 
 echo "🧪 Verificación finalizada."
