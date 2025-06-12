@@ -134,7 +134,8 @@ _fzf_compgen_dir(){
   fd --type=d --hidden --exclude .git . "$1"
 }
 
-[ -f ~/dotfiles/fzf-git.sh/fzf-git.sh ] && source ~/dotfiles/fzf-git.sh/fzf-git.sh
+[ -f "$HOME/dotfiles/fzf-git.sh/fzf-git.sh" ] && source "$HOME/dotfiles/fzf-git.sh/fzf-git.sh"
+
 
 show_file_or_dir_preview="if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi"
 
